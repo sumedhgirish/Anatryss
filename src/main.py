@@ -26,9 +26,9 @@ class Window:
 
         xGridlines, yGridlines = self.grid.renderGrid()
         for xpos in xGridlines:
-             _  = pygame.draw.line(self.screen, 'black', (xpos, 0), (xpos, self.screensize[1]), width=2)
+             _  = pygame.draw.line(self.screen, '#a0a0a0', (xpos, 0), (xpos, self.screensize[1]), width=2)
         for ypos in yGridlines:
-             _  = pygame.draw.line(self.screen, 'black', (0, ypos), (self.screensize[0], ypos), width=2)
+             _  = pygame.draw.line(self.screen, '#a0a0a0', (0, ypos), (self.screensize[0], ypos), width=2)
 
         pygame.display.flip()
 

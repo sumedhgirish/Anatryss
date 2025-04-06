@@ -1,7 +1,7 @@
 from vector import Vector2
 
 class Grid2:
-    def __init__(self, framesize :Vector2, gridsize :int = 100):
+    def __init__(self, framesize :Vector2, gridsize :int = 100) -> None:
         self.framesize :Vector2 = framesize
 
         self.zoom :float = 1
