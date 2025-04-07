@@ -25,6 +25,9 @@ class Vector2:
     def __rmul__(self, other :float):
         return self * other
 
+    def as_tuple(self):
+        return (self.x, self.y)
+
 class Vector3:
     def __init__(self, x :float, y :float, z :float) -> None:
         self.x :float = x

@@ -19,14 +19,13 @@ class Member2:
         return hash((self.start, self.end))
 
 class Truss2:
-    def __init__(self, origin :Vector2) -> None:
-        self.origin :Vector2 = origin
+    def __init__(self) -> None:
         self.joints :dict[str, Joint2] = dict()
         self.members :set[Member2] = set()
 
     def addJoint(self, pos :Vector2, label :str):
         """ Add a joint to a truss system, wrt to its origin. """
-        self.joints[label] = Joint2(pos - self.origin)
+        self.joints[label] = Joint2(pos)
 
     def addMember(self, labelA :str, labelB :str):
         if all([labelA in self.joints, labelB in self.joints]):
