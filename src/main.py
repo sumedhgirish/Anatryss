@@ -1,18 +1,22 @@
 import pygame
 
+from structures import Block2
 from vector import Vector2
 from mutils import Grid2
-from structures import Truss2
 
 class Window:
-    def __init__(self, screensize :tuple[int, int]=(1080, 720)) -> None:
+    def __init__(self, screensize :tuple[int, int]=(800, 600)) -> None:
         self.title :str = "Anatryss"
         self.screensize :tuple[int, int] = screensize
 
         self.grid :Grid2 = Grid2(framesize=Vector2(*self.screensize))
-        self.system :list[Truss2] = list()
+        self.system = list()
+        self.selected = None
+        self.pen_mode = None
 
         self.running :bool = False
+        self.last_click = None
+        self.is_dragging = False
 
         # initialise pygame
         self.initialise()
@@ -22,16 +26,23 @@ class Window:
         pygame.display.set_caption(self.title)
         self.screen :pygame.Surface = pygame.display.set_mode(self.screensize)
 
-    def drawStructs(self):
-        for truss in self.system:
-            for member in truss.members:
-                _ = pygame.draw.line(
-                    self.screen,
-                    color = "black",
-                    start_pos = (member.start.pos * self.grid.gridsize * self.grid.zoom + self.grid.origin).as_tuple(),
-                    end_pos = (member.end.pos * self.grid.gridsize * self.grid.zoom + self.grid.origin).as_tuple(),
-                    width=3
-                )
+    def createObject(self, start_pos, end_pos):
+        if not self.pen_mode:
+            return
+
+        match (self.pen_mode):
+            case 'block':
+                self.system.append(Block2(start_pos, end_pos))
+            case _:
+                return
+
+    def checkSelection(self, mousepos):
+        for obj in reversed(self.system):
+            if obj.containsPoint(mousepos - self.grid.origin):
+                self.selected = obj
+                break
+        else:
+            self.selected = None
 
     def drawFrame(self):
         # clear screen
@@ -43,7 +54,12 @@ class Window:
         for ypos in yGridlines:
              _  = pygame.draw.line(self.screen, '#a0a0a0', (0, ypos), (self.screensize[0], ypos), width=2)
 
-        self.drawStructs()
+        for obj in self.system:
+            obj.draw(self.screen, self.grid.origin)
+            if obj == self.selected:
+                obj.color = "#40e0d0"
+            else:
+                obj.color = "#000000"
 
         pygame.display.flip()
 
@@ -53,6 +69,21 @@ class Window:
                 self.running = False
             elif event.type == pygame.MOUSEWHEEL:
                 self.grid.shiftGrid(Vector2(10*event.x, -10*event.y))
+
+            # dragging
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    self.last_click = Vector2(*pygame.mouse.get_pos()) - self.grid.origin
+                    self.is_dragging = True
+                if event.button == 3:
+                    pass
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    self.is_dragging = False
+                    self.createObject(self.last_click, Vector2(*pygame.mouse.get_pos()) - self.grid.origin)
+                if event.button == 3:
+                    self.checkSelection(Vector2(*pygame.mouse.get_pos()))
 
             pressed = pygame.key.get_pressed()
             # moving the grid
@@ -71,6 +102,12 @@ class Window:
             if pressed[pygame.K_MINUS]:
                 self.grid.zoom *= 0.90
 
+            # selecting different pen modes
+            if pressed[pygame.K_b]:
+                self.pen_mode = 'block'
+            if pressed[pygame.K_x]:
+                self.pen_mode = None
+
 
     def run(self):
         self.running = True
@@ -81,14 +118,4 @@ class Window:
 
 if __name__ == '__main__':
     root = Window()
-
-    t = Truss2()
-    t.addJoint(Vector2(3, 3), label='A')
-    t.addJoint(Vector2(4, 6), label='B')
-    t.addJoint(Vector2(6, 6), label='C')
-    t.addMember('A', 'B')
-    t.addMember('A', 'C')
-    t.addMember('B', 'C')
-    root.system.append(t)
-
     root.run()

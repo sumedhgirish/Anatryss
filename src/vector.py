@@ -1,3 +1,4 @@
+from decimal import DivisionByZero
 from typing import override, Self
 
 class Vector2:
