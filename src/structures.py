@@ -49,3 +49,17 @@ class Block2:
 
     def containsPoint(self, point):
         return self.rect.collidepoint(point.x, point.y)
+
+class Circle2:
+    def __init__(self, start, end):
+        self.start = start
+        self.end = end
+        self.color = "#000000"
+
+        self.radius = abs(start - end)
+
+    def draw(self, screen, origin):
+        pygame.draw.circle(screen, self.color, (self.start + origin).as_tuple(), self.radius, 5)
+
+    def containsPoint(self, point):
+        return abs(point - self.start) <= self.radius

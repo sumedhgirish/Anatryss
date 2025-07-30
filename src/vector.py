@@ -1,5 +1,6 @@
 from decimal import DivisionByZero
 from typing import override, Self
+import math
 
 class Vector2:
     def __init__(self, x :float, y :float) -> None:
@@ -25,6 +26,9 @@ class Vector2:
 
     def __rmul__(self, other :float):
         return self * other
+
+    def __abs__(self):
+        return math.sqrt(self.x ** 2 + self.y ** 2)
 
     def as_tuple(self):
         return (self.x, self.y)

@@ -1,6 +1,6 @@
 import pygame
 
-from structures import Block2
+from structures import Block2, Circle2
 from vector import Vector2
 from mutils import Grid2
 
@@ -33,6 +33,8 @@ class Window:
         match (self.pen_mode):
             case 'block':
                 self.system.append(Block2(start_pos, end_pos))
+            case 'circle':
+                self.system.append(Circle2(start_pos, end_pos))
             case _:
                 return
 
@@ -105,6 +107,8 @@ class Window:
             # selecting different pen modes
             if pressed[pygame.K_b]:
                 self.pen_mode = 'block'
+            if pressed[pygame.K_c]:
+                self.pen_mode = 'circle'
             if pressed[pygame.K_x]:
                 self.pen_mode = None
 
